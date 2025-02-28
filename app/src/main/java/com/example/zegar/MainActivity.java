@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button timeSelectionButton;
     int hour, minute;
-    AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+    AlarmManager alarmManager;
 
     final static int xxx = 1;
 
@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(
                         getBaseContext(), xxx, intent, PendingIntent.FLAG_IMMUTABLE);
 
+                alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 alarmManager.set(
                         AlarmManager.RTC_WAKEUP, calendarSet.getTimeInMillis(), pendingIntent
                 );

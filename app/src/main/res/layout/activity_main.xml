@@ -24,7 +24,7 @@
             android:autoSizeTextType="uniform"
             android:clipToOutline="false"
             android:drawableTintMode="add"
-            android:format12Hour="hh:mm:ss"
+            android:format12Hour="@null"
             android:format24Hour="hh:mm:ss"
             android:textSize="96sp" />
 
