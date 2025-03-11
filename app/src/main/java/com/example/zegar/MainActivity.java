@@ -1,7 +1,8 @@
 package com.example.zegar;
 
 import android.app.AlarmManager;
-import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,7 +19,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import java.sql.Time;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        CreateAlarmNotificationChannel(); //własna funkcja tworzaca kanał do powiadomień
+
         timeSelectionButton = findViewById(R.id.alarmSetButton);
     }
 
@@ -46,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int selectedHour, int selectedMinute) {
+
+
                 hour = selectedHour;
                 minute = selectedMinute;
 
@@ -62,19 +67,47 @@ public class MainActivity extends AppCompatActivity {
                     calendarSet.add(Calendar.DATE, 1);
                 }
 
-                Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                        getBaseContext(), xxx, intent, PendingIntent.FLAG_IMMUTABLE);
+                Intent intent = new Intent(MainActivity.this, AlarmReceiver.class);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast
+                        (
+                                MainActivity.this,
+                                0,
+                                intent,
+                                PendingIntent.FLAG_IMMUTABLE
+                        );
 
-                alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
                 alarmManager.set(
-                        AlarmManager.RTC_WAKEUP, calendarSet.getTimeInMillis(), pendingIntent
+                        AlarmManager.RTC_WAKEUP, //obudzi urządzenie, żeby wystartować pendingIntent
+                        calendarSet.getTimeInMillis(),
+                        pendingIntent
                 );
+
+                Toast alarmSetInformerToast = Toast.makeText
+                        (
+                                MainActivity.this,
+                                calendarSet.get(Calendar.HOUR_OF_DAY)+":"+calendarSet.get(Calendar.MINUTE),
+                                Toast.LENGTH_LONG
+                        );
+                alarmSetInformerToast.show();
             }
         };
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(this, onTimeSetListener, hour, minute, true);
         timePickerDialog.setTitle("Ustaw alarm");
         timePickerDialog.show();
+    }
+
+    private void CreateAlarmNotificationChannel(){
+        NotificationChannel nChannel = new NotificationChannel
+                (
+                        "notifyAlarm",
+                        "AlarmFinishedChannel",
+                        NotificationManager.IMPORTANCE_HIGH
+                );
+        nChannel.setDescription("Kanał do powiadomień o ustawionym alarmie");
+
+        NotificationManager nManager = getSystemService(NotificationManager.class);
+        nManager.createNotificationChannel(nChannel);
     }
 }

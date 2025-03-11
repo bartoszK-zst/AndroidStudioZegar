@@ -1,5 +1,6 @@
 package com.example.zegar;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,14 +8,22 @@ import android.content.Intent;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 public class AlarmReceiver extends BroadcastReceiver {
+    @SuppressLint("MissingPermission")
     @Override
     public void onReceive(Context context, Intent intent) {
-        //TODO wyślij powiadomienie nwm
+
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(
-            context, "channelid").setContentTitle("Alarm!!!");
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1, notificationBuilder.build());
+            context, "notifyAlarm")
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("Alarm!!!")
+                .setContentText("Alaurm!!!!")
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+
+        notificationManager.notify(200, notificationBuilder.build());
     }
 }
