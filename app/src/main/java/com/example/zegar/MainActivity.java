@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -26,8 +27,6 @@ public class MainActivity extends AppCompatActivity {
     Button timeSelectionButton;
     int hour, minute;
     AlarmManager alarmManager;
-
-    final static int xxx = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast alarmSetInformerToast = Toast.makeText
                         (
                                 MainActivity.this,
-                                calendarSet.get(Calendar.HOUR_OF_DAY)+":"+calendarSet.get(Calendar.MINUTE),
+                                "Alarm o godzinie "+calendarSet.get(Calendar.HOUR_OF_DAY)+":"+calendarSet.get(Calendar.MINUTE),
                                 Toast.LENGTH_LONG
                         );
                 alarmSetInformerToast.show();
@@ -99,15 +98,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void CreateAlarmNotificationChannel(){
-        NotificationChannel nChannel = new NotificationChannel
-                (
-                        "notifyAlarm",
-                        "AlarmFinishedChannel",
-                        NotificationManager.IMPORTANCE_HIGH
-                );
-        nChannel.setDescription("Kanał do powiadomień o ustawionym alarmie");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel nChannel = new NotificationChannel
+                    (
+                            "notifyAlarm",
+                            "AlarmFinishedChannel",
+                            NotificationManager.IMPORTANCE_HIGH
+                    );
+            nChannel.setDescription("Kanał do powiadomień o ustawionym alarmie");
 
-        NotificationManager nManager = getSystemService(NotificationManager.class);
-        nManager.createNotificationChannel(nChannel);
+            NotificationManager nManager = getSystemService(NotificationManager.class);
+            nManager.createNotificationChannel(nChannel);
+        }
     }
 }
